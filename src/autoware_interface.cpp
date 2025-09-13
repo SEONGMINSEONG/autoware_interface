@@ -60,12 +60,17 @@ void AutowareInterface::aw_gear_cmd_callback(const autoware_vehicle_msgs::msg::G
     if (gear_mode_ == autoware_vehicle_msgs::msg::GearCommand::DRIVE)
     {
         gear_cmd_ = 0;
+        gear_mode_ = 0;
     }
     else if(gear_mode_ == autoware_vehicle_msgs::msg::GearCommand::REVERSE)
     {
         gear_cmd_ = 1;
+        gear_mode_ = 1;
     }
-
+    else if(gear_mode_ == autoware_vehicle_msgs::msg::GearCommand::PARK)
+    {
+        gear_mode_ = 3;
+    }
     std_msgs::msg::Int8 gear_cmd_msg;
     gear_cmd_msg.data = gear_cmd_;
     gear_cmd_pub_->publish(gear_cmd_msg);
@@ -138,7 +143,7 @@ void AutowareInterface::timer_callback() {
     TC_steer_cmd_pub_->publish(steer_cmd_msg);
 
     std_msgs::msg::Int8 gear_matched_msg;
-    gear_matched_msg.data = (gear_cmd_ == gear_status_) ? true : false;
+    gear_matched_msg.data = (gear_mode_ == gear_status_) ? true : false;
     TC_gear_matched_pub_->publish(gear_matched_msg);
 }
 
